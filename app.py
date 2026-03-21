@@ -129,8 +129,8 @@ def init_db():
     blog_count = c.execute("SELECT COUNT(*) FROM blogs").fetchone()[0]
     if blog_count == 0:
         blogs = [
-            ("Why Learn Python in 2025?",
-             "Python dominates the programming world. Here is why every student should learn it.",
+            ("Why Learn Python in 2026?",
+             "Python dominates the programming world. Here is why every student should learn it in 2026.",
              "Python is versatile, readable, and in high demand across AI, web development, and data science. Starting with Python gives you a strong foundation for any tech career.",
              "Technology"),
             ("Top 5 Careers After Tally",
@@ -461,4 +461,4 @@ if __name__ == "__main__":
     print("  Admin pass    -> Admin@123")
     print("=========================================")
     print("")
-    app.run(host='0.0.0.0', port=10000, debug=False)
+    app.run(debug=True, port=3000)
