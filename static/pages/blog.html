@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blog – Plustech Institute</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    .blog-section { padding: 5rem 2rem 6rem; }
+    .blog-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+    .blog-card { overflow: hidden; cursor: pointer; }
+    .blog-cover {
+      height: 180px; border-radius: 12px 12px 0 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; margin: -1px; /* remove top gap */
+    }
+    .blog-body { padding: 1.5rem; }
+    .blog-cat { display:inline-block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; padding:3px 10px; border-radius:100px; background:var(--blue-100); color:var(--blue-600); margin-bottom:0.75rem; }
+    .blog-title { font-size:1.05rem; font-weight:700; color:var(--blue-900); margin-bottom:0.5rem; line-height:1.4; }
+    .blog-excerpt { font-size:0.875rem; color:var(--gray-600); line-height:1.65; }
+    .blog-footer { display:flex; justify-content:space-between; align-items:center; padding: 1rem 1.5rem; border-top:1px solid var(--gray-100); font-size:0.82rem; color:var(--gray-400); }
+
+    /* MODAL */
+    .blog-modal-overlay { display:none; position:fixed; inset:0; z-index:2000; background:rgba(10,22,40,0.7); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:1rem; }
+    .blog-modal-overlay.open { display:flex; }
+    .blog-modal { background:white; border-radius:var(--radius-xl); max-width:680px; width:100%; max-height:85vh; overflow-y:auto; box-shadow:var(--shadow-xl); animation:slideUp 0.3s ease; }
+    .blog-modal-header { padding:2rem 2rem 0; }
+    .blog-modal-body { padding:1.5rem 2rem 2rem; }
+    .blog-modal-close { float:right; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--gray-400); }
+    .blog-modal-title { font-size:1.6rem; color:var(--blue-900); margin:1rem 0 0.5rem; line-height:1.3; }
+    .blog-modal-meta { color:var(--gray-400); font-size:0.85rem; margin-bottom:1.5rem; }
+    .blog-modal-content { color:var(--gray-700); line-height:1.85; font-size:0.95rem; }
+    @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+    @media(max-width:900px){.blog-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.blog-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <script src="/js/layout.js"></script>
+
+  <div class="page-header">
+    <div class="page-header-content">
+      <div class="section-tag" style="background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.3);display:inline-flex;margin:0 auto 1rem">✦ Knowledge Hub</div>
+      <h1>Blog & Articles</h1>
+      <p>Stay updated with the latest in tech, finance, and career advice from the Plustech team.</p>
+    </div>
+  </div>
+
+  <section class="blog-section">
+    <div class="container">
+      <div class="blog-grid" id="blogGrid">
+        <!-- Loaded by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG MODAL -->
+  <div class="blog-modal-overlay" id="blogModal">
+    <div class="blog-modal">
+      <div class="blog-modal-header">
+        <button class="blog-modal-close" id="blogModalClose">✕</button>
+        <span class="blog-cat" id="modalBlogCat"></span>
+        <h2 class="blog-modal-title" id="modalBlogTitle"></h2>
+        <p class="blog-modal-meta" id="modalBlogMeta"></p>
+      </div>
+      <div class="blog-modal-body">
+        <div class="blog-modal-content" id="modalBlogContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    const colors = ['#dbeafe','#dcfce7','#fef3c7','#fce7f3','#ede9fe','#e0f2fe'];
+    const emojis = ['📚','💡','🖥️','📊','🎨','🚀'];
+
+    async function loadBlogs() {
+      const grid = document.getElementById('blogGrid');
+      grid.innerHTML = '<div class="skeleton" style="height:300px;border-radius:16px"></div>'.repeat(4);
+      try {
+        const blogs = await api('/api/blogs');
+        grid.innerHTML = blogs.map((b, i) => `
+          <div class="card blog-card fade-in" onclick="openBlog(${b.id})">
+            <div class="blog-cover" style="background:${colors[i%colors.length]}">${emojis[i%emojis.length]}</div>
+            <div class="blog-body">
+              <span class="blog-cat">${b.category}</span>
+              <h3 class="blog-title">${b.title}</h3>
+              <p class="blog-excerpt">${b.excerpt}</p>
+            </div>
+            <div class="blog-footer">
+              <span>✍️ ${b.author}</span>
+              <span>${new Date(b.created_at).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}</span>
+            </div>
+          </div>
+        `).join('');
+        document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+      } catch(e) {
+        grid.innerHTML = '<p style="color:var(--gray-400)">Could not load blogs.</p>';
+      }
+    }
+
+    async function openBlog(id) {
+      try {
+        const blog = await api(`/api/blogs/${id}`);
+        document.getElementById('modalBlogCat').textContent = blog.category;
+        document.getElementById('modalBlogTitle').textContent = blog.title;
+        document.getElementById('modalBlogMeta').textContent = `By ${blog.author} · ${new Date(blog.created_at).toLocaleDateString('en-IN',{dateStyle:'long'})}`;
+        document.getElementById('modalBlogContent').textContent = blog.content;
+        document.getElementById('blogModal').classList.add('open');
+      } catch(e) { showToast('Could not load article.', 'error'); }
+    }
+
+    document.getElementById('blogModalClose').addEventListener('click', () => document.getElementById('blogModal').classList.remove('open'));
+    document.getElementById('blogModal').addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+
+    loadBlogs();
+  </script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block title %}About Us – Plustech Institute{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-story { background: var(--gray-50); }
+    .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .story-image {
+      background: linear-gradient(135deg, var(--blue-900), var(--blue-500));
+      border-radius: var(--radius-xl); padding: 3rem; color: white;
+      position: relative; overflow: hidden; min-height: 400px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+    }
+    .story-image::before {
+      content:''; position:absolute; top:-50px; right:-50px;
+      width:200px; height:200px; border-radius:50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .story-image h3 { font-size:1.8rem; margin-bottom:0.75rem; position:relative; z-index:1; }
+    .story-image p { font-size:0.95rem; opacity:0.85; position:relative; z-index:1; }
+    .story-big-num { font-size:6rem; font-weight:800; color:rgba(255,255,255,0.12); position:absolute; top:1rem; right:2rem; font-family:'Sora',sans-serif; }
+
+    .team-section { padding: 6rem 2rem; }
+    .team-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
+    .team-card { text-align:center; padding:2rem; }
+    .team-avatar {
+      width:90px; height:90px; border-radius:50%; margin:0 auto 1.25rem;
+      background: linear-gradient(135deg, var(--blue-500), var(--blue-800));
+      display:flex; align-items:center; justify-content:center;
+      font-size:2rem; font-weight:800; color:white; font-family:'Sora',sans-serif;
+    }
+    .team-name { font-size:1.05rem; font-weight:700; color:var(--blue-900); margin-bottom:0.25rem; }
+    .team-role { font-size:0.85rem; color:var(--blue-500); font-weight:600; margin-bottom:0.5rem; }
+    .team-desc { font-size:0.85rem; color:var(--gray-600); }
+
+    .mission-section { background:linear-gradient(135deg, var(--blue-900), var(--blue-700)); color:white; padding:6rem 2rem; }
+    .mission-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
+    .mission-card { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:var(--radius-lg); padding:2rem; }
+    .mission-card .icon { font-size:2.5rem; margin-bottom:1rem; }
+    .mission-card h3 { font-size:1.1rem; margin-bottom:0.5rem; }
+    .mission-card p { font-size:0.88rem; opacity:0.82; }
+
+    .map-section { padding:5rem 2rem; background:var(--gray-50); }
+    .address-card {
+      background:white; border:1px solid var(--gray-200); border-radius:var(--radius-lg);
+      padding:2rem; display:flex; flex-direction:column; gap:1rem;
+    }
+    .address-row { display:flex; align-items:flex-start; gap:1rem; }
+    .address-icon { font-size:1.4rem; flex-shrink:0; margin-top:2px; }
+    .address-label { font-weight:700; color:var(--blue-900); font-size:0.9rem; }
+    .address-value { color:var(--gray-600); font-size:0.9rem; }
+
+    .map-embed { border-radius:var(--radius-lg); overflow:hidden; height:350px; }
+    .map-embed iframe { width:100%; height:100%; border:none; }
+
+    @media(max-width:900px){
+      .story-grid{grid-template-columns:1fr}
+      .team-grid{grid-template-columns:repeat(2,1fr)}
+      .mission-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:600px){.team-grid{grid-template-columns:1fr}}
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+      <div class="section-tag" style="background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.3);display:inline-flex;margin:0 auto 1rem">✦ Our Story</div>
+      <h1>About Plustech Institute</h1>
+      <p>Empowering students with practical, industry-ready skills since 2018. Based in Dombivli, Maharashtra.</p>
+    </div>
+  </div>
+
+  <!-- STORY -->
+  <section class="section about-story">
+    <div class="container">
+      <div class="story-grid">
+        <div class="fade-in">
+          <div class="section-tag">✦ Who We Are</div>
+          <h2 class="section-title">Built for Students,<br>Driven by Results</h2>
+          <p style="color:var(--gray-600);margin-bottom:1.5rem;line-height:1.8">Plustech Institute was founded with a simple mission: make quality technical and professional education accessible to every student in Dombivli and beyond. We believe in learning by doing, not just watching.</p>
+          <p style="color:var(--gray-600);margin-bottom:2rem;line-height:1.8">We offer both online and offline classes, so students can learn at their own pace without compromising on quality. Our faculty are industry veterans who bring real-world experience into every session.</p>
+          <div class="grid-2" style="gap:1rem">
+            <div class="stat-card"><div class="stat-number">500+</div><div class="stat-label">Happy Students</div></div>
+            <div class="stat-card"><div class="stat-number">27+</div><div class="stat-label">Active Courses</div></div>
+          </div>
+        </div>
+        <div class="fade-in fade-delay-2">
+          <div class="story-image">
+            <div class="story-big-num">+</div>
+            <h3>i-SPEAK English Academy & Plustech</h3>
+            <p>Located in the heart of Dombivli East, next to the railway station — accessible, convenient, and ready to help you grow.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION / VALUES -->
+  <section class="mission-section">
+    <div class="container">
+      <div class="text-center fade-in" style="margin-bottom:3rem">
+        <div class="section-tag" style="background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.3);display:inline-flex">✦ Our Mission</div>
+        <h2 class="section-title" style="color:white">What Drives Us Every Day</h2>
+      </div>
+      <div class="mission-grid">
+        <div class="mission-card fade-in">
+          <div class="icon">🎯</div>
+          <h3>Practical Skills First</h3>
+          <p>Every course is designed around real-world applications. We skip fluff and focus on skills that get you hired.</p>
+        </div>
+        <div class="mission-card fade-in fade-delay-1">
+          <div class="icon">🤝</div>
+          <h3>Student-Centered Approach</h3>
+          <p>Small batch sizes, personalized attention, and doubt-clearing sessions ensure no one is left behind.</p>
+        </div>
+        <div class="mission-card fade-in fade-delay-2">
+          <div class="icon">🌱</div>
+          <h3>Lifelong Learning</h3>
+          <p>We don't just teach — we mentor. Alumni get access to updated materials and career support even after graduation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section class="team-section">
+    <div class="container">
+      <div class="text-center fade-in" style="margin-bottom:3rem">
+        <div class="section-tag">✦ Our Team</div>
+        <h2 class="section-title">Meet Our Expert Faculty</h2>
+        <p class="section-subtitle">Our instructors are practicing professionals who bring deep expertise and industry insight to every class.</p>
+      </div>
+      <div class="team-grid">
+        <div class="card team-card fade-in">
+          <div class="team-avatar">P</div>
+          <div class="team-name">Prof. Prakash Desai</div>
+          <div class="team-role">Director & Lead Instructor</div>
+          <p class="team-desc">10+ years in software development and education. Expert in Python, Java, and Fullstack development.</p>
+        </div>
+        <div class="card team-card fade-in fade-delay-1">
+          <div class="team-avatar">S</div>
+          <div class="team-name">Sonal Mehta</div>
+          <div class="team-role">Accounting & Finance Trainer</div>
+          <p class="team-desc">CA finalist with 8 years experience in SAP FICO, Tally, and professional accounting courses.</p>
+        </div>
+        <div class="card team-card fade-in fade-delay-2">
+          <div class="team-avatar">A</div>
+          <div class="team-name">Amit Kulkarni</div>
+          <div class="team-role">Web & Design Instructor</div>
+          <p class="team-desc">Full-stack developer and UI/UX designer with 6 years of industry experience in top Mumbai agencies.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCATION -->
+  <section class="map-section">
+    <div class="container">
+      <div class="text-center fade-in" style="margin-bottom:3rem">
+        <div class="section-tag">✦ Find Us</div>
+        <h2 class="section-title">Visit Our Center</h2>
+      </div>
+      <div class="grid-2" style="gap:2rem;align-items:start">
+        <div class="address-card fade-in">
+          <div class="address-row">
+            <div class="address-icon">📍</div>
+            <div>
+              <div class="address-label">Address</div>
+              <div class="address-value">i-SPEAK ENGLISH ACADEMY, 203, Ananddeep CHS, Near Madhuban Cinema, Next to Railway Station, Dombivli East, Maharashtra</div>
+            </div>
+          </div>
+          <div class="address-row">
+            <div class="address-icon">🚉</div>
+            <div>
+              <div class="address-label">How to Reach</div>
+              <div class="address-value">Next to Dombivli East Railway Station. Just 1 minute walk from the station exit.</div>
+            </div>
+          </div>
+          <div class="address-row">
+            <div class="address-icon">🕘</div>
+            <div>
+              <div class="address-label">Timings</div>
+              <div class="address-value">Monday to Saturday: 9:00 AM – 8:00 PM<br>Sunday: By Appointment</div>
+            </div>
+          </div>
+          <div class="address-row">
+            <div class="address-icon">📞</div>
+            <div>
+              <div class="address-label">Phone</div>
+              <div class="address-value">+91 XXXXX XXXXX</div>
+            </div>
+          </div>
+          <a href="/contact" class="btn btn-primary" style="margin-top:0.5rem">📩 Send Us a Message</a>
+        </div>
+        <div class="fade-in fade-delay-1">
+          <div class="map-embed">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3766.5!2d73.086!3d19.218!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sDombivli+East+Railway+Station!5e0!3m2!1sen!2sin!4v1"
+              allowfullscreen loading="lazy">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}

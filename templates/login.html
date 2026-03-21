@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Login – Plustech Institute{% endblock %}
+
+{% block extra_css %}
+<style>
+    body { background: var(--gray-50); }
+    .auth-wrapper {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 5rem 1.5rem 3rem;
+    }
+    .auth-card {
+      background: white; border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl); border: 1px solid var(--gray-200);
+      width: 100%; max-width: 460px; overflow: hidden;
+    }
+    .auth-header {
+      background: linear-gradient(135deg, var(--blue-900), var(--blue-600));
+      padding: 2.5rem 2.5rem 2rem; color: white; text-align: center;
+    }
+    .auth-logo { font-family:'Sora',sans-serif; font-size:1.8rem; font-weight:800; margin-bottom:0.5rem; }
+    .auth-logo span:first-child { color: var(--accent-light); }
+    .auth-tagline { font-size: 0.88rem; opacity: 0.8; }
+    .auth-body { padding: 2.5rem; }
+    .auth-title { font-size: 1.4rem; color: var(--blue-900); margin-bottom: 0.25rem; }
+    .auth-sub { font-size: 0.88rem; color: var(--gray-400); margin-bottom: 2rem; }
+    .auth-footer { text-align:center; margin-top:1.5rem; font-size:0.88rem; color:var(--gray-600); }
+    .auth-footer a { color: var(--blue-500); font-weight: 600; }
+    .password-wrap { position: relative; }
+    .password-wrap .form-input { padding-right: 3rem; }
+    .pwd-toggle { position:absolute; right:0.9rem; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:1.1rem; color:var(--gray-400); }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo"><span>Plus</span><span style="color:white">tech</span></div>
+        <p class="auth-tagline">Your gateway to professional skills</p>
+      </div>
+      <div class="auth-body">
+        <h2 class="auth-title">Welcome Back 👋</h2>
+        <p class="auth-sub">Login to access your dashboard and enrolled courses.</p>
+
+        <div class="alert" id="loginAlert"></div>
+
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com" autocomplete="email"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="password-wrap">
+            <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password"/>
+            <button class="pwd-toggle" onclick="togglePwd('loginPassword', this)">👁</button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg" id="loginBtn" style="width:100%;justify-content:center;margin-top:0.5rem">
+          Login to Plustech
+        </button>
+
+        <div class="auth-footer">
+          Don't have an account? <a href="/register">Register here →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Redirect if already logged in
+    if (Auth.isLoggedIn()) window.location.href = '/dashboard';
+
+    function togglePwd(id, btn) {
+      const inp = document.getElementById(id);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+    }
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('loginBtn');
+      const alertEl = document.getElementById('loginAlert');
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!email || !password) {
+        alertEl.className = 'alert alert-error show';
+        alertEl.textContent = 'Please enter your email and password.';
+        return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Logging in...';
+      try {
+        const res = await api('/api/auth/login', {
+          method: 'POST', body: JSON.stringify({ email, password })
+        });
+        Auth.setSession(res.token, res.user);
+        showToast('Welcome back, ' + res.user.name + '!', 'success');
+        setTimeout(() => window.location.href = '/dashboard', 800);
+      } catch (e) {
+        alertEl.className = 'alert alert-error show';
+        alertEl.textContent = e.message;
+        btn.disabled = false; btn.textContent = 'Login to Plustech';
+      }
+    });
+
+    // Allow Enter key
+    document.getElementById('loginPassword').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('loginBtn').click();
+    });
+  </script>
+{% endblock %}

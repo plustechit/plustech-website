@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block title %}Plustech Institute – Learn. Grow. Excel.{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    background: linear-gradient(140deg, var(--blue-900) 0%, var(--blue-700) 55%, var(--blue-500) 100%);
+    position: relative; overflow: hidden; padding: 7rem 2rem 4rem;
+  }
+  .hero::before {
+    content: ''; position: absolute; width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(74,144,226,0.25) 0%, transparent 70%);
+    top: -200px; right: -200px; border-radius: 50%;
+  }
+  .hero-inner {
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    position: relative; z-index: 1;
+  }
+  .hero-content { color: white; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+    padding: 0.4rem 1rem; border-radius: 100px;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--accent-light); margin-bottom: 1.5rem;
+  }
+  .hero-badge .dot { width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+  .hero h1 { font-size: clamp(2.2rem,5vw,3.6rem); line-height:1.1; margin-bottom:1.5rem; color:white; }
+  .hero h1 .highlight { color: var(--accent-light); }
+  .hero-desc { font-size:1.05rem; opacity:0.88; line-height:1.75; margin-bottom:2rem; }
+  .hero-actions { display:flex; gap:1rem; flex-wrap:wrap; }
+  .hero-trust { display:flex; align-items:center; gap:1rem; margin-top:2rem; font-size:0.85rem; opacity:0.7; }
+  .hero-trust .avatars { display:flex; }
+  .hero-trust .avatar { width:32px;height:32px;border-radius:50%;background:var(--blue-400);border:2px solid var(--blue-700);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:white;margin-left:-8px; }
+  .hero-trust .avatar:first-child{margin-left:0;}
+  .hero-visual { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
+  .hero-card { background:rgba(255,255,255,0.1);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.2);border-radius:16px;padding:1.5rem;color:white;transition:transform 0.3s; }
+  .hero-card:hover{transform:translateY(-4px);}
+  .hero-card:first-child{grid-column:span 2;}
+  .hero-card .card-icon{font-size:2rem;margin-bottom:0.75rem;}
+  .hero-card h3{font-size:1rem;font-weight:700;margin-bottom:0.3rem;}
+  .hero-card p{font-size:0.82rem;opacity:0.8;}
+  .hero-card .card-stat{font-family:'Sora',sans-serif;font-size:2rem;font-weight:800;color:var(--accent-light);}
+  .marquee-bar{background:var(--accent);padding:0.7rem 0;overflow:hidden;}
+  .marquee-inner{display:flex;gap:3rem;animation:marquee 20s linear infinite;white-space:nowrap;width:max-content;}
+  .marquee-inner span{font-family:'Sora',sans-serif;font-weight:700;font-size:0.85rem;color:var(--blue-900);text-transform:uppercase;letter-spacing:0.05em;}
+  .marquee-inner span::before{content:'✦ ';}
+  @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  .features-section{background:var(--gray-50);}
+  .feature-card{padding:2rem;text-align:center;}
+  .feature-icon{font-size:2.5rem;margin-bottom:1rem;}
+  .feature-card h3{font-size:1.1rem;color:var(--blue-900);margin-bottom:0.5rem;}
+  .feature-card p{font-size:0.9rem;color:var(--gray-600);}
+  .courses-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;}
+  .cta-banner{background:linear-gradient(135deg,var(--blue-900),var(--blue-600));color:white;text-align:center;padding:5rem 2rem;position:relative;overflow:hidden;}
+  .cta-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(74,144,226,0.3),transparent 60%);}
+  .cta-banner-content{position:relative;z-index:1;}
+  .cta-banner h2{font-size:clamp(1.8rem,3.5vw,2.8rem);margin-bottom:1rem;}
+  .cta-banner p{font-size:1.05rem;opacity:0.85;margin-bottom:2rem;max-width:500px;margin-left:auto;margin-right:auto;}
+  .cta-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+  .testimonials{background:var(--blue-50);}
+  .testi-card{padding:2rem;}
+  .testi-stars{color:var(--accent);font-size:1rem;margin-bottom:0.75rem;}
+  .testi-text{font-size:0.95rem;color:var(--gray-700);font-style:italic;margin-bottom:1.25rem;line-height:1.7;}
+  .testi-author{display:flex;align-items:center;gap:0.75rem;}
+  .testi-avatar{width:44px;height:44px;border-radius:50%;background:var(--blue-500);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1rem;}
+  .testi-name{font-weight:700;color:var(--blue-900);font-size:0.9rem;}
+  .testi-course{font-size:0.8rem;color:var(--gray-400);}
+  @media(max-width:900px){.hero-inner{grid-template-columns:1fr}.hero-visual{display:none}.courses-preview-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.courses-preview-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge"><span class="dot"></span> Now Enrolling — Batch 2025</div>
+      <h1>Learn to Code. <span class="highlight">Build Your Future.</span></h1>
+      <p class="hero-desc">Plustech is Dombivli's premier programming & professional skills institute offering both online and offline classes. From coding to accounting — we have a course for you.</p>
+      <div class="hero-actions">
+        <a href="/courses" class="btn btn-accent btn-lg">Explore Courses →</a>
+        <a href="/contact" class="btn btn-lg" style="background:rgba(255,255,255,0.1);color:white;border:2px solid rgba(255,255,255,0.3)">Talk to Us</a>
+      </div>
+      <div class="hero-trust">
+        <div class="avatars">
+          <div class="avatar">R</div><div class="avatar">P</div><div class="avatar">S</div><div class="avatar">A</div>
+        </div>
+        <span>500+ students already enrolled</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="card-icon">🚀</div>
+        <div class="card-stat">27+</div>
+        <h3>Professional Courses</h3>
+        <p>Tech, Finance, Design, Marketing & More</p>
+      </div>
+      <div class="hero-card"><div class="card-icon">💻</div><h3>Online & Offline</h3><p>Flexible learning modes</p></div>
+      <div class="hero-card"><div class="card-icon">🏆</div><h3>Certificate</h3><p>Industry-recognized on completion</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-bar">
+  <div class="marquee-inner" id="marqueeInner"></div>
+</div>
+
+<!-- STATS -->
+<section class="section-sm">
+  <div class="container">
+    <div class="grid-4 fade-in">
+      <div class="stat-card"><div class="stat-number">500+</div><div class="stat-label">Students Enrolled</div></div>
+      <div class="stat-card"><div class="stat-number">27+</div><div class="stat-label">Professional Courses</div></div>
+      <div class="stat-card"><div class="stat-number">5+</div><div class="stat-label">Years of Excellence</div></div>
+      <div class="stat-card"><div class="stat-number">95%</div><div class="stat-label">Placement Rate</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section features-section">
+  <div class="container">
+    <div class="text-center fade-in" style="margin-bottom:3rem">
+      <div class="section-tag">✦ Why Choose Us</div>
+      <h2 class="section-title">The Plustech Advantage</h2>
+      <p class="section-subtitle">We combine expert instruction, flexible schedules, and real-world projects to make you job-ready.</p>
+    </div>
+    <div class="grid-4">
+      <div class="card feature-card fade-in"><div class="feature-icon">👨‍🏫</div><h3>Expert Faculty</h3><p>Learn from industry professionals with years of real-world experience.</p></div>
+      <div class="card feature-card fade-in fade-delay-1"><div class="feature-icon">🖥️</div><h3>Online & Offline</h3><p>Attend classes from home or visit our center in Dombivli East.</p></div>
+      <div class="card feature-card fade-in fade-delay-2"><div class="feature-icon">📜</div><h3>Certification</h3><p>Receive a recognized certificate upon successful course completion.</p></div>
+      <div class="card feature-card fade-in fade-delay-3"><div class="feature-icon">💼</div><h3>Placement Support</h3><p>Resume building, mock interviews, and job referrals for all students.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- COURSES PREVIEW -->
+<section class="section">
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;margin-bottom:2rem" class="fade-in">
+      <div>
+        <div class="section-tag">✦ Our Programs</div>
+        <h2 class="section-title">Popular Courses</h2>
+      </div>
+      <a href="/courses" class="btn btn-secondary">View All Courses →</a>
+    </div>
+    <div class="courses-preview-grid" id="homeCoursesGrid">
+      <p style="color:var(--gray-400)">Loading courses...</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner">
+  <div class="cta-banner-content">
+    <div class="section-tag" style="background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.3);display:inline-flex;margin:0 auto 1rem">✦ Limited Seats</div>
+    <h2>Ready to Start Your Career Journey?</h2>
+    <p>Join hundreds of students building real skills at Plustech Institute. Enroll today!</p>
+    <div class="cta-actions">
+      <a href="/register" class="btn btn-accent btn-lg">Enroll Now — It's Free to Register</a>
+      <a href="/contact" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3)">Contact Admissions</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section testimonials">
+  <div class="container">
+    <div class="text-center fade-in" style="margin-bottom:3rem">
+      <div class="section-tag">✦ Student Stories</div>
+      <h2 class="section-title">What Our Students Say</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card testi-card fade-in"><div class="testi-stars">★★★★★</div><p class="testi-text">"Plustech changed my life. I learned Python and web development here, and landed a job within 2 months!"</p><div class="testi-author"><div class="testi-avatar">R</div><div><div class="testi-name">Rahul Sharma</div><div class="testi-course">Fullstack Developer</div></div></div></div>
+      <div class="card testi-card fade-in fade-delay-1"><div class="testi-stars">★★★★★</div><p class="testi-text">"The Tally Prime and SAP FICO course was exactly what I needed. The faculty explains everything so clearly."</p><div class="testi-author"><div class="testi-avatar">P</div><div><div class="testi-name">Priya Nair</div><div class="testi-course">SAP FICO & Tally Prime</div></div></div></div>
+      <div class="card testi-card fade-in fade-delay-2"><div class="testi-stars">★★★★★</div><p class="testi-text">"I took the Digital Marketing diploma and started freelancing right away. Plustech gives real-world skills."</p><div class="testi-author"><div class="testi-avatar">A</div><div><div class="testi-name">Anjali More</div><div class="testi-course">Digital Marketing</div></div></div></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const courseNames = ["Python","Web Development","Java","React/Node.js","SAP FICO","Tally Prime","Data Analyst","Digital Marketing","Graphic Design","Power BI","MS Office","Personality Dev"];
+  const mi = document.getElementById('marqueeInner');
+  if(mi){const d=[...courseNames,...courseNames];mi.innerHTML=d.map(c=>`<span>${c}</span>`).join('');}
+
+  async function loadHomeCourses() {
+    const grid = document.getElementById('homeCoursesGrid');
+    try {
+      const courses = await api('/api/courses');
+      grid.innerHTML = courses.slice(0,6).map(c=>`
+        <div class="card course-card fade-in">
+          <div class="course-icon">${c.icon}</div>
+          <span class="course-category-badge">${c.category}</span>
+          <h3 class="course-title">${c.title}</h3>
+          <p class="course-desc">${c.description}</p>
+          <div class="course-footer">
+            <span class="course-price">${c.price}</span>
+            <a href="/courses" class="btn btn-primary" style="padding:0.4rem 1rem;font-size:0.82rem">Enroll →</a>
+          </div>
+        </div>`).join('');
+      document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+    } catch(e){ grid.innerHTML='<p style="color:var(--gray-400)">Could not load courses.</p>'; }
+  }
+  loadHomeCourses();
+</script>
+{% endblock %}

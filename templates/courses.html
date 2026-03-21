@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}Courses – Plustech Institute{% endblock %}
+
+{% block extra_css %}
+<style>
+    .courses-section { padding: 4rem 2rem 6rem; }
+    .courses-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+    .enroll-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(10,22,40,0.65); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .enroll-modal-overlay.open { display: flex; }
+    .enroll-modal {
+      background: white; border-radius: var(--radius-xl);
+      padding: 2.5rem; max-width: 480px; width: 90%;
+      box-shadow: var(--shadow-xl); animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
+    .modal-header h3 { font-size:1.3rem; color:var(--blue-900); }
+    .modal-close { background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--gray-400); }
+    .modal-course-name { font-size:1rem;font-weight:600;color:var(--blue-500);margin-bottom:1.5rem; }
+    @media(max-width:900px){.courses-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.courses-grid{grid-template-columns:1fr}}
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-content">
+      <div class="section-tag" style="background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.3);display:inline-flex;margin:0 auto 1rem">✦ All Programs</div>
+      <h1>Explore Our Courses</h1>
+      <p>27+ professional courses across Technology, Finance, Design, Analytics & more. Online and offline both available.</p>
+    </div>
+  </div>
+
+  <section class="courses-section">
+    <div class="container">
+      <!-- FILTERS -->
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-cat="All">All Courses</button>
+        <button class="filter-tab" data-cat="Technology">Technology</button>
+        <button class="filter-tab" data-cat="Accounting & Finance">Accounting & Finance</button>
+        <button class="filter-tab" data-cat="Data & Analytics">Data & Analytics</button>
+        <button class="filter-tab" data-cat="Design & Marketing">Design & Marketing</button>
+        <button class="filter-tab" data-cat="Office Productivity">Office Productivity</button>
+      </div>
+
+      <!-- SEARCH -->
+      <div style="margin-bottom:2rem">
+        <input type="text" id="searchInput" class="form-input" placeholder="🔍  Search courses..." style="max-width:400px"/>
+      </div>
+
+      <div id="coursesGrid" class="courses-grid">
+        <!-- Loaded via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ENROLL MODAL -->
+  <div class="enroll-modal-overlay" id="enrollModal">
+    <div class="enroll-modal">
+      <div class="modal-header">
+        <h3>Enroll in Course</h3>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <p class="modal-course-name" id="modalCourseName"></p>
+
+      <div id="enrollLoggedOut">
+        <div class="alert alert-error show">Please login or register to enroll.</div>
+        <div style="display:flex;gap:1rem">
+          <a href="/login" class="btn btn-primary" style="flex:1;justify-content:center">Login</a>
+          <a href="/register" class="btn btn-secondary" style="flex:1;justify-content:center">Register</a>
+        </div>
+      </div>
+
+      <div id="enrollLoggedIn" style="display:none">
+        <p style="color:var(--gray-600);font-size:0.9rem;margin-bottom:1.5rem">You're enrolling as <strong id="enrollUserName"></strong>. Our team will contact you within 24 hours.</p>
+        <div class="alert" id="enrollAlert"></div>
+        <button class="btn btn-primary" id="confirmEnrollBtn" style="width:100%;justify-content:center">✓ Confirm Enrollment</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let allCourses = [];
+    let selectedCourseId = null;
+
+    async function loadCourses() {
+      const grid = document.getElementById('coursesGrid');
+      grid.innerHTML = '<div class="skeleton" style="height:200px;border-radius:16px"></div>'.repeat(6);
+      try {
+        allCourses = await api('/api/courses');
+        renderCourses(allCourses);
+      } catch(e) {
+        grid.innerHTML = '<p>Error loading courses.</p>';
+      }
+    }
+
+    function renderCourses(courses) {
+      const grid = document.getElementById('coursesGrid');
+      if (!courses.length) { grid.innerHTML = '<p style="color:var(--gray-400);grid-column:span 3">No courses found.</p>'; return; }
+      grid.innerHTML = courses.map(c => `
+        <div class="card course-card fade-in">
+          <div class="course-icon">${c.icon}</div>
+          <span class="course-category-badge">${c.category}</span>
+          <h3 class="course-title">${c.title}</h3>
+          <p class="course-desc">${c.description}</p>
+          <div class="course-meta">
+            <span>⏱ ${c.duration}</span>
+            <span>📊 ${c.level}</span>
+          </div>
+          <div class="course-footer">
+            <span class="course-price">${c.price}</span>
+            <button class="btn btn-primary" style="padding:0.4rem 1rem;font-size:0.82rem" onclick="openEnroll(${c.id},'${c.title.replace(/'/g,"\\'")}')">Enroll Now</button>
+          </div>
+        </div>
+      `).join('');
+      document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+    }
+
+    // Filters
+    document.getElementById('filterTabs').addEventListener('click', e => {
+      if (!e.target.classList.contains('filter-tab')) return;
+      document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+      e.target.classList.add('active');
+      const cat = e.target.dataset.cat;
+      const filtered = cat === 'All' ? allCourses : allCourses.filter(c=>c.category===cat);
+      renderCourses(filtered);
+    });
+
+    // Search
+    document.getElementById('searchInput').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      const filtered = allCourses.filter(c=>c.title.toLowerCase().includes(q)||c.category.toLowerCase().includes(q));
+      renderCourses(filtered);
+    });
+
+    // Enroll modal
+    function openEnroll(courseId, courseName) {
+      selectedCourseId = courseId;
+      document.getElementById('modalCourseName').textContent = courseName;
+      document.getElementById('enrollModal').classList.add('open');
+      const user = Auth.getUser();
+      if (Auth.isLoggedIn() && user) {
+        document.getElementById('enrollLoggedOut').style.display = 'none';
+        document.getElementById('enrollLoggedIn').style.display = 'block';
+        document.getElementById('enrollUserName').textContent = user.name;
+      } else {
+        document.getElementById('enrollLoggedOut').style.display = 'block';
+        document.getElementById('enrollLoggedIn').style.display = 'none';
+      }
+      document.getElementById('enrollAlert').className = 'alert';
+      document.getElementById('enrollAlert').textContent = '';
+    }
+
+    document.getElementById('modalClose').addEventListener('click', () => document.getElementById('enrollModal').classList.remove('open'));
+    document.getElementById('enrollModal').addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+
+    document.getElementById('confirmEnrollBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('confirmEnrollBtn');
+      const alert = document.getElementById('enrollAlert');
+      btn.disabled = true; btn.textContent = 'Enrolling...';
+      try {
+        const res = await api('/api/enrollments', { method:'POST', body: JSON.stringify({ course_id: selectedCourseId }) });
+        alert.className = 'alert alert-success show';
+        alert.textContent = res.message;
+        btn.textContent = '✓ Enrolled!';
+        setTimeout(() => document.getElementById('enrollModal').classList.remove('open'), 2000);
+      } catch(e) {
+        alert.className = 'alert alert-error show';
+        alert.textContent = e.message;
+        btn.disabled = false; btn.textContent = '✓ Confirm Enrollment';
+      }
+    });
+
+    loadCourses();
+  </script>
+{% endblock %}

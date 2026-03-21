@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel – Plustech Institute</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    body { background: #0f1724; color: white; font-family: 'DM Sans', sans-serif; }
+    .admin-layout { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .admin-sidebar {
+      width: 240px; background: #0a1020; border-right: 1px solid rgba(255,255,255,0.07);
+      display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100;
+    }
+    .admin-brand {
+      padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .admin-brand-icon {
+      width: 38px; height: 38px; background: var(--blue-500); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-weight: 800;
+      font-family: 'Sora', sans-serif; font-size: 1rem;
+    }
+    .admin-brand-text { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1rem; }
+    .admin-brand-sub { font-size: 0.7rem; opacity: 0.5; }
+    .admin-nav { padding: 1rem 0.75rem; flex: 1; }
+    .admin-nav-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.4; padding: 0.5rem 0.75rem; margin-top: 0.5rem; }
+    .admin-nav-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0.75rem; border-radius: 8px;
+      font-size: 0.88rem; font-weight: 500; cursor: pointer;
+      transition: all 0.2s; color: rgba(255,255,255,0.6);
+      border: none; background: none; width: 100%; text-align: left; margin-bottom: 2px;
+    }
+    .admin-nav-item:hover { background: rgba(255,255,255,0.06); color: white; }
+    .admin-nav-item.active { background: var(--blue-500); color: white; }
+    .admin-nav-item .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .admin-footer { padding: 1rem; border-top: 1px solid rgba(255,255,255,0.07); }
+    .admin-user { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .admin-user-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--blue-600); display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: 0.85rem;
+    }
+    .admin-user-name { font-size: 0.85rem; font-weight: 600; }
+    .admin-user-role { font-size: 0.72rem; opacity: 0.5; }
+
+    /* MAIN */
+    .admin-main { margin-left: 240px; flex: 1; padding: 2rem; min-height: 100vh; }
+    .admin-topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 2rem;
+    }
+    .admin-page-title { font-family: 'Sora', sans-serif; font-size: 1.5rem; font-weight: 700; }
+    .admin-page-sub { font-size: 0.85rem; opacity: 0.5; margin-top: 0.2rem; }
+
+    /* PANELS */
+    .admin-panel { display: none; }
+    .admin-panel.active { display: block; }
+
+    /* STAT CARDS */
+    .admin-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    .admin-stat {
+      background: #151e2e; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; padding: 1.5rem;
+    }
+    .admin-stat-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+    .admin-stat-val { font-family: 'Sora', sans-serif; font-size: 2rem; font-weight: 800; color: white; }
+    .admin-stat-label { font-size: 0.8rem; opacity: 0.5; margin-top: 0.2rem; }
+    .admin-stat-trend { font-size: 0.75rem; color: #10b981; margin-top: 0.4rem; }
+
+    /* TABLE */
+    .admin-card {
+      background: #151e2e; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; overflow: hidden; margin-bottom: 1.5rem;
+    }
+    .admin-card-header {
+      padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .admin-card-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.95rem; }
+    .admin-card-count { font-size: 0.78rem; background: var(--blue-500); padding: 2px 10px; border-radius: 100px; }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th {
+      text-align: left; padding: 0.75rem 1.5rem;
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .admin-table td {
+      padding: 0.9rem 1.5rem; font-size: 0.875rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.85);
+    }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr:hover td { background: rgba(255,255,255,0.03); }
+    .badge {
+      display: inline-block; padding: 2px 10px; border-radius: 100px;
+      font-size: 0.72rem; font-weight: 700;
+    }
+    .badge-pending { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .badge-active { background: rgba(16,185,129,0.15); color: #10b981; }
+    .badge-student { background: rgba(36,112,204,0.2); color: #60a5fa; }
+    .badge-admin { background: rgba(168,85,247,0.2); color: #c084fc; }
+    .badge-tech { background: rgba(59,130,246,0.15); color: #93c5fd; }
+    .badge-finance { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    .badge-design { background: rgba(244,114,182,0.15); color: #f9a8d4; }
+    .badge-analytics { background: rgba(251,191,36,0.15); color: #fcd34d; }
+    .badge-office { background: rgba(167,139,250,0.15); color: #ddd6fe; }
+
+    /* SEARCH BAR */
+    .admin-search {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 0.5rem 1rem; color: white; font-size: 0.875rem;
+      outline: none; width: 220px;
+    }
+    .admin-search::placeholder { color: rgba(255,255,255,0.3); }
+    .admin-search:focus { border-color: var(--blue-400); }
+
+    /* EMPTY STATE */
+    .empty-state { padding: 3rem; text-align: center; opacity: 0.4; }
+    .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* LOGOUT BTN */
+    .admin-logout {
+      width: 100%; padding: 0.6rem; border-radius: 8px;
+      background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);
+      color: #f87171; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .admin-logout:hover { background: rgba(239,68,68,0.2); }
+
+    /* NOTIFICATION DOT */
+    .notif-dot {
+      width: 6px; height: 6px; background: #ef4444; border-radius: 50%;
+      margin-left: auto; animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    /* MOBILE */
+    @media(max-width:900px){
+      .admin-sidebar { display: none; }
+      .admin-main { margin-left: 0; }
+      .admin-stats { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <div class="admin-brand-icon">P+</div>
+        <div>
+          <div class="admin-brand-text">Plustech</div>
+          <div class="admin-brand-sub">Admin Panel</div>
+        </div>
+      </div>
+
+      <nav class="admin-nav">
+        <div class="admin-nav-label">Main</div>
+        <button class="admin-nav-item active" onclick="switchAdmin('overview',this)">
+          <span class="nav-icon">📊</span> Overview
+        </button>
+        <button class="admin-nav-item" onclick="switchAdmin('students',this)">
+          <span class="nav-icon">👥</span> Students
+        </button>
+        <button class="admin-nav-item" onclick="switchAdmin('enrollments',this)">
+          <span class="nav-icon">📚</span> Enrollments
+        </button>
+        <button class="admin-nav-item" onclick="switchAdmin('messages',this)">
+          <span class="nav-icon">📩</span> Messages
+          <span class="notif-dot" id="msgDot"></span>
+        </button>
+        <div class="admin-nav-label">Content</div>
+        <button class="admin-nav-item" onclick="switchAdmin('courses',this)">
+          <span class="nav-icon">🎓</span> Courses
+        </button>
+        <button class="admin-nav-item" onclick="switchAdmin('blogs',this)">
+          <span class="nav-icon">📝</span> Blogs
+        </button>
+      </nav>
+
+      <div class="admin-footer">
+        <div class="admin-user">
+          <div class="admin-user-avatar">A</div>
+          <div>
+            <div class="admin-user-name">Admin</div>
+            <div class="admin-user-role">Super Admin</div>
+          </div>
+        </div>
+        <button class="admin-logout" onclick="Auth.logout()">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="admin-main">
+
+      <!-- OVERVIEW -->
+      <div class="admin-panel active" id="panel-overview">
+        <div class="admin-topbar">
+          <div>
+            <div class="admin-page-title">Dashboard Overview</div>
+            <div class="admin-page-sub">Welcome back, Admin! Here's what's happening today.</div>
+          </div>
+        </div>
+        <div class="admin-stats" id="adminStats">
+          <div class="admin-stat"><div class="admin-stat-icon">👥</div><div class="admin-stat-val" id="statStudents">-</div><div class="admin-stat-label">Total Students</div></div>
+          <div class="admin-stat"><div class="admin-stat-icon">📚</div><div class="admin-stat-val" id="statEnrollments">-</div><div class="admin-stat-label">Total Enrollments</div></div>
+          <div class="admin-stat"><div class="admin-stat-icon">📩</div><div class="admin-stat-val" id="statMessages">-</div><div class="admin-stat-label">Contact Messages</div></div>
+          <div class="admin-stat"><div class="admin-stat-icon">🎓</div><div class="admin-stat-val" id="statCourses">-</div><div class="admin-stat-label">Total Courses</div></div>
+        </div>
+
+        <!-- Recent enrollments -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title">Recent Enrollments</span>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th>Student</th><th>Course</th><th>Category</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody id="recentEnrollmentsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- STUDENTS -->
+      <div class="admin-panel" id="panel-students">
+        <div class="admin-topbar">
+          <div><div class="admin-page-title">All Students</div><div class="admin-page-sub">Registered student accounts</div></div>
+          <input type="text" class="admin-search" placeholder="Search students..." oninput="filterTable('studentsBody', this.value)"/>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title">Student List</span>
+            <span class="admin-card-count" id="studentsCount">0</span>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th></tr></thead>
+            <tbody id="studentsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ENROLLMENTS -->
+      <div class="admin-panel" id="panel-enrollments">
+        <div class="admin-topbar">
+          <div><div class="admin-page-title">All Enrollments</div><div class="admin-page-sub">Course enrollment records</div></div>
+          <input type="text" class="admin-search" placeholder="Search enrollments..." oninput="filterTable('enrollmentsBody', this.value)"/>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title">Enrollment Records</span>
+            <span class="admin-card-count" id="enrollmentsCount">0</span>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th>#</th><th>Student</th><th>Email</th><th>Course</th><th>Category</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody id="enrollmentsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MESSAGES -->
+      <div class="admin-panel" id="panel-messages">
+        <div class="admin-topbar">
+          <div><div class="admin-page-title">Contact Messages</div><div class="admin-page-sub">Messages from the contact form</div></div>
+          <input type="text" class="admin-search" placeholder="Search messages..." oninput="filterTable('messagesBody', this.value)"/>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title">Inbox</span>
+            <span class="admin-card-count" id="messagesCount">0</span>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Subject</th><th>Message</th><th>Date</th></tr></thead>
+            <tbody id="messagesBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- COURSES -->
+      <div class="admin-panel" id="panel-courses">
+        <div class="admin-topbar">
+          <div><div class="admin-page-title">All Courses</div><div class="admin-page-sub">Course catalog</div></div>
+          <input type="text" class="admin-search" placeholder="Search courses..." oninput="filterTable('adminCoursesBody', this.value)"/>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title">Course List</span>
+            <span class="admin-card-count" id="adminCoursesCount">0</span>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th>#</th><th>Title</th><th>Category</th><th>Duration</th><th>Level</th><th>Price</th></tr></thead>
+            <tbody id="adminCoursesBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- BLOGS -->
+      <div class="admin-panel" id="panel-blogs">
+        <div class="admin-topbar">
+          <div><div class="admin-page-title">Blog Articles</div><div class="admin-page-sub">Published articles</div></div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title">Articles</span>
+            <span class="admin-card-count" id="adminBlogsCount">0</span>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th>#</th><th>Title</th><th>Category</th><th>Author</th><th>Date</th></tr></thead>
+            <tbody id="adminBlogsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    // Guard — only admin can access
+    if (!Auth.isLoggedIn()) window.location.href = '/login';
+    const currentUser = Auth.getUser();
+    if (currentUser && currentUser.role !== 'admin') window.location.href = '/dashboard';
+
+    function switchAdmin(panel, btn) {
+      document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
+      document.getElementById('panel-' + panel).classList.add('active');
+      btn.classList.add('active');
+      loadPanel(panel);
+    }
+
+    function catBadge(cat) {
+      const map = {
+        'Technology': 'badge-tech',
+        'Accounting & Finance': 'badge-finance',
+        'Design & Marketing': 'badge-design',
+        'Data & Analytics': 'badge-analytics',
+        'Office Productivity': 'badge-office',
+      };
+      return `<span class="badge ${map[cat]||'badge-student'}">${cat}</span>`;
+    }
+
+    function fmtDate(d) {
+      return new Date(d).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
+    }
+
+    function filterTable(tbodyId, query) {
+      const rows = document.querySelectorAll(`#${tbodyId} tr`);
+      rows.forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
+      });
+    }
+
+    async function loadPanel(panel) {
+      if (panel === 'overview' || panel === 'students') await loadStudents();
+      if (panel === 'overview' || panel === 'enrollments') await loadEnrollments();
+      if (panel === 'overview' || panel === 'messages') await loadMessages();
+      if (panel === 'overview' || panel === 'courses') await loadAdminCourses();
+      if (panel === 'blogs') await loadAdminBlogs();
+    }
+
+    async function loadStudents() {
+      try {
+        const data = await api('/api/admin/students');
+        document.getElementById('statStudents').textContent = data.length;
+        document.getElementById('studentsCount').textContent = data.length;
+        document.getElementById('studentsBody').innerHTML = data.map((s,i) => `
+          <tr>
+            <td style="opacity:0.4">${i+1}</td>
+            <td><strong>${s.name}</strong></td>
+            <td style="opacity:0.7">${s.email}</td>
+            <td style="opacity:0.7">${s.phone || '-'}</td>
+            <td><span class="badge badge-${s.role==='admin'?'admin':'student'}">${s.role}</span></td>
+            <td style="opacity:0.6">${fmtDate(s.created_at)}</td>
+          </tr>
+        `).join('') || emptyRow(6);
+      } catch(e) { console.log(e); }
+    }
+
+    async function loadEnrollments() {
+      try {
+        const data = await api('/api/admin/enrollments');
+        document.getElementById('statEnrollments').textContent = data.length;
+        document.getElementById('enrollmentsCount').textContent = data.length;
+        document.getElementById('enrollmentsBody').innerHTML = data.map((e,i) => `
+          <tr>
+            <td style="opacity:0.4">${i+1}</td>
+            <td><strong>${e.student_name}</strong></td>
+            <td style="opacity:0.7;font-size:0.8rem">${e.email}</td>
+            <td>${e.title}</td>
+            <td>${catBadge(e.category)}</td>
+            <td><span class="badge badge-${e.status==='active'?'active':'pending'}">${e.status}</span></td>
+            <td style="opacity:0.6">${fmtDate(e.enrolled_at)}</td>
+          </tr>
+        `).join('') || emptyRow(7);
+        document.getElementById('recentEnrollmentsBody').innerHTML = data.slice(0,5).map((e,i) => `
+          <tr>
+            <td><strong>${e.student_name}</strong></td>
+            <td>${e.title}</td>
+            <td>${catBadge(e.category)}</td>
+            <td><span class="badge badge-${e.status==='active'?'active':'pending'}">${e.status}</span></td>
+            <td style="opacity:0.6">${fmtDate(e.enrolled_at)}</td>
+          </tr>
+        `).join('') || emptyRow(5);
+      } catch(e) { console.log(e); }
+    }
+
+    async function loadMessages() {
+      try {
+        const data = await api('/api/admin/messages');
+        document.getElementById('statMessages').textContent = data.length;
+        document.getElementById('messagesCount').textContent = data.length;
+        if (data.length > 0) document.getElementById('msgDot').style.display = 'block';
+        document.getElementById('messagesBody').innerHTML = data.map((m,i) => `
+          <tr>
+            <td style="opacity:0.4">${i+1}</td>
+            <td><strong>${m.name}</strong></td>
+            <td style="opacity:0.7;font-size:0.8rem">${m.email}</td>
+            <td style="opacity:0.7">${m.phone || '-'}</td>
+            <td><span class="badge badge-student">${m.subject || 'General'}</span></td>
+            <td style="max-width:250px;font-size:0.82rem;opacity:0.8">${m.message}</td>
+            <td style="opacity:0.6">${fmtDate(m.created_at)}</td>
+          </tr>
+        `).join('') || emptyRow(7);
+      } catch(e) { console.log(e); }
+    }
+
+    async function loadAdminCourses() {
+      try {
+        const data = await api('/api/courses');
+        document.getElementById('statCourses').textContent = data.length;
+        document.getElementById('adminCoursesCount').textContent = data.length;
+        document.getElementById('adminCoursesBody').innerHTML = data.map((c,i) => `
+          <tr>
+            <td style="opacity:0.4">${i+1}</td>
+            <td><strong>${c.title}</strong></td>
+            <td>${catBadge(c.category)}</td>
+            <td style="opacity:0.7">${c.duration}</td>
+            <td style="opacity:0.7">${c.level}</td>
+            <td style="color:#f59e0b;font-weight:700">${c.price}</td>
+          </tr>
+        `).join('');
+      } catch(e) { console.log(e); }
+    }
+
+    async function loadAdminBlogs() {
+      try {
+        const data = await api('/api/blogs');
+        document.getElementById('adminBlogsCount').textContent = data.length;
+        document.getElementById('adminBlogsBody').innerHTML = data.map((b,i) => `
+          <tr>
+            <td style="opacity:0.4">${i+1}</td>
+            <td><strong>${b.title}</strong></td>
+            <td><span class="badge badge-tech">${b.category}</span></td>
+            <td style="opacity:0.7">${b.author}</td>
+            <td style="opacity:0.6">${fmtDate(b.created_at)}</td>
+          </tr>
+        `).join('');
+      } catch(e) { console.log(e); }
+    }
+
+    function emptyRow(cols) {
+      return `<tr><td colspan="${cols}"><div class="empty-state"><div class="empty-icon">📭</div><p>No records found</p></div></td></tr>`;
+    }
+
+    // Load overview on start
+    loadPanel('overview');
+  </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact – Plustech Institute</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    .contact-section { padding: 5rem 2rem 6rem; }
+    .contact-grid { display:grid; grid-template-columns:1fr 1.5fr; gap:3rem; align-items:start; }
+    .contact-info-card { background:linear-gradient(135deg,var(--blue-900),var(--blue-700)); color:white; padding:2.5rem; border-radius:var(--radius-xl); }
+    .contact-info-card h3 { font-size:1.4rem; margin-bottom:0.5rem; }
+    .contact-info-card p { opacity:0.82; font-size:0.92rem; margin-bottom:2rem; }
+    .contact-item { display:flex; gap:1rem; margin-bottom:1.5rem; }
+    .contact-item-icon { width:44px; height:44px; border-radius:10px; background:rgba(255,255,255,0.12); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+    .contact-item-label { font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; opacity:0.7; margin-bottom:0.2rem; }
+    .contact-item-value { font-size:0.92rem; font-weight:500; }
+    .contact-form-card { background:white; border:1px solid var(--gray-200); border-radius:var(--radius-xl); padding:2.5rem; box-shadow:var(--shadow-md); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media(max-width:900px){.contact-grid{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <script src="/js/layout.js"></script>
+
+  <div class="page-header">
+    <div class="page-header-content">
+      <div class="section-tag" style="background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.3);display:inline-flex;margin:0 auto 1rem">✦ Get in Touch</div>
+      <h1>Contact Us</h1>
+      <p>Have a question about admissions or courses? We're here to help. Reach out and we'll respond within 24 hours.</p>
+    </div>
+  </div>
+
+  <section class="contact-section">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- INFO -->
+        <div class="contact-info-card fade-in">
+          <h3>Let's Connect</h3>
+          <p>Visit us at our Dombivli center or reach out through any channel below.</p>
+          <div class="contact-item">
+            <div class="contact-item-icon">📍</div>
+            <div>
+              <div class="contact-item-label">Address</div>
+              <div class="contact-item-value">203, Ananddeep CHS, Near Madhuban Cinema, Next to Railway Station, Dombivli East</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">📞</div>
+            <div>
+              <div class="contact-item-label">Phone</div>
+              <div class="contact-item-value">+91 91368 19666</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">✉️</div>
+            <div>
+              <div class="contact-item-label">Email</div>
+              <div class="contact-item-value">adityaparab257@gmail.com</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">🕘</div>
+            <div>
+              <div class="contact-item-label">Working Hours</div>
+              <div class="contact-item-value">Mon–Sat: 9:00 AM – 8:00 PM</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">🚉</div>
+            <div>
+              <div class="contact-item-label">Landmark</div>
+              <div class="contact-item-value">Next to Dombivli East Railway Station, Near Madhuban Cinema</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORM -->
+        <div class="contact-form-card fade-in fade-delay-1">
+          <h3 style="font-size:1.4rem;color:var(--blue-900);margin-bottom:0.25rem">Send Us a Message</h3>
+          <p style="color:var(--gray-400);font-size:0.9rem;margin-bottom:2rem">Fill in the form and we'll get back to you within 24 hours.</p>
+
+          <div class="alert" id="contactAlert"></div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Aditya Rajaram Parab</label>
+              <input type="text" class="form-input" id="cName" placeholder="Your name"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">adityaparab257@gmail.com</label>
+              <input type="email" class="form-input" id="cEmail" placeholder="your@email.com"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" class="form-input" id="cPhone" placeholder="+91 91368 19666"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Subject</label>
+              <select class="form-select" id="cSubject">
+                <option value="">Select a subject</option>
+                <option>Course Enquiry</option>
+                <option>Admission Process</option>
+                <option>Fees & Batches</option>
+                <option>Online Classes</option>
+                <option>Certification</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message *</label>
+            <textarea class="form-textarea" id="cMessage" placeholder="Write your message here..." rows="5"></textarea>
+          </div>
+          <button class="btn btn-primary btn-lg" id="contactSubmitBtn" style="width:100%;justify-content:center">
+            📩 Send Message
+          </button>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div style="margin-top:5rem">
+        <div class="text-center fade-in" style="margin-bottom:3rem">
+          <div class="section-tag">✦ FAQs</div>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+        </div>
+        <div class="grid-2" style="gap:1.5rem">
+          <div class="card" style="padding:1.75rem" id="faq1">
+            <h4 style="color:var(--blue-900);margin-bottom:0.5rem;cursor:pointer" onclick="toggleFaq('faq1')">Are classes online or offline? ▾</h4>
+            <p style="color:var(--gray-600);font-size:0.9rem" class="faq-body">Both! We offer flexible online classes via live sessions and also have our physical center in Dombivli East for students who prefer in-person learning.</p>
+          </div>
+          <div class="card" style="padding:1.75rem" id="faq2">
+            <h4 style="color:var(--blue-900);margin-bottom:0.5rem;cursor:pointer" onclick="toggleFaq('faq2')">How do I enroll? ▾</h4>
+            <p style="color:var(--gray-600);font-size:0.9rem" class="faq-body">Register on our website, then browse courses and click "Enroll Now". Our team will call you to confirm batch timings and fee payment.</p>
+          </div>
+          <div class="card" style="padding:1.75rem" id="faq3">
+            <h4 style="color:var(--blue-900);margin-bottom:0.5rem;cursor:pointer" onclick="toggleFaq('faq3')">Do you provide certificates? ▾</h4>
+            <p style="color:var(--gray-600);font-size:0.9rem" class="faq-body">Yes! All students receive a Plustech Institute certificate upon successfully completing their course. This is recognized by employers across India.</p>
+          </div>
+          <div class="card" style="padding:1.75rem" id="faq4">
+            <h4 style="color:var(--blue-900);margin-bottom:0.5rem;cursor:pointer" onclick="toggleFaq('faq4')">What is the fee structure? ▾</h4>
+            <p style="color:var(--gray-600);font-size:0.9rem" class="faq-body">Course fees vary per program and are listed on our Courses page. We also offer installment payment options for students who need flexibility.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/js/app.js"></script>
+  <script>
+    document.getElementById('contactSubmitBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('contactSubmitBtn');
+      const alert = document.getElementById('contactAlert');
+      const name = document.getElementById('cName').value.trim();
+      const email = document.getElementById('cEmail').value.trim();
+      const phone = document.getElementById('cPhone').value.trim();
+      const subject = document.getElementById('cSubject').value;
+      const message = document.getElementById('cMessage').value.trim();
+
+      if (!name || !email || !message) {
+        alert.className = 'alert alert-error show';
+        alert.textContent = 'Please fill in Name, Email, and Message.';
+        return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Sending...';
+      try {
+        const res = await api('/api/contact', { method:'POST', body:JSON.stringify({name,email,phone,subject,message}) });
+        alert.className = 'alert alert-success show';
+        alert.textContent = res.message;
+        ['cName','cEmail','cPhone','cMessage'].forEach(id => document.getElementById(id).value='');
+        document.getElementById('cSubject').value='';
+      } catch(e) {
+        alert.className = 'alert alert-error show';
+        alert.textContent = e.message;
+      }
+      btn.disabled = false; btn.textContent = '📩 Send Message';
+    });
+
+    function toggleFaq(id) {
+      document.querySelectorAll('.faq-body').forEach(b => { if(b.closest('.card').id !== id) b.style.display='none'; });
+      const body = document.getElementById(id).querySelector('.faq-body');
+      body.style.display = body.style.display === 'none' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>
