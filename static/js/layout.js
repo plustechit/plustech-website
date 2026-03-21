@@ -96,4 +96,4 @@ function injectFooter() {
   scrollBtn.title = 'Back to top';
   document.body.appendChild(scrollBtn);
 }
-injectFooter();
+document.addEventListener("DOMContentLoaded", function() { injectFooter(); });
