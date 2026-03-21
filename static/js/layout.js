@@ -77,7 +77,7 @@ function injectFooter() {
         <div>
           <p class="footer-heading">Contact</p>
           <ul class="footer-links">
-            <li><a href="tel:+91 9136819666">📞 Call Us</a></li>
+            <li><a href="tel:+919136819666">📞 +91 91368 19666</a></li>
             <li><a href="mailto:info@plustech.in">✉️ info@plustech.in</a></li>
             <li><a href="/contact">📍 203, Ananddeep CHS, Near Madhuban Cinema, Dombivli East</a></li>
           </ul>
