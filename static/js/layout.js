@@ -84,7 +84,7 @@ function injectFooter() {
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2025 Plustech Institute. All rights reserved.</span>
+        <span>© 2026 Plustech Institute. All rights reserved.</span>
         <span>Made with ❤️ for TYBSCIT Project</span>
       </div>
     </div>
