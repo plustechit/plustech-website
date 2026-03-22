@@ -461,4 +461,6 @@ if __name__ == "__main__":
     print("  Admin pass    -> Admin@123")
     print("=========================================")
     print("")
-    app.run(debug=True, port=3000)
+    import os
+    port = int(os.environ.get("PORT", 3000))
+    app.run(host="0.0.0.0", port=port, debug=False)
