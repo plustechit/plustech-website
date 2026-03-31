@@ -208,8 +208,13 @@
             <div class="enr-info">
               <div class="enr-title">${e.title}</div>
               <div class="enr-meta">📁 ${e.category} &nbsp;·&nbsp; ⏱ ${e.duration} &nbsp;·&nbsp; Enrolled ${new Date(e.enrolled_at).toLocaleDateString('en-IN')}</div>
+              ${e.status === 'pending' ? '<div style="font-size:12px;color:#f59e0b;margin-top:4px;">⏳ Waiting for admin to give access to materials...</div>' : ''}
+              ${e.status === 'completed' ? '<div style="font-size:12px;color:#10b981;margin-top:4px;">🎓 Course completed!</div>' : ''}
             </div>
-            <span class="enr-status status-${e.status}">${e.status.charAt(0).toUpperCase()+e.status.slice(1)}</span>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+              <span class="enr-status status-${e.status}">${e.status.charAt(0).toUpperCase()+e.status.slice(1)}</span>
+              ${e.status === 'active' ? `<a href="/learn?enrollment=${e.id}" style="background:#1e5aa8;color:white;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:700;white-space:nowrap;">📖 View Materials</a>` : ''}
+            </div>
           </div>
         `).join('');
       } catch (e) {

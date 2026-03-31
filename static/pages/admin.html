@@ -253,7 +253,7 @@
             <span class="admin-card-count" id="enrollmentsCount">0</span>
           </div>
           <table class="admin-table">
-            <thead><tr><th>#</th><th>Student</th><th>Email</th><th>Course</th><th>Category</th><th>Status</th><th>Date</th></tr></thead>
+            <thead><tr><th>#</th><th>Student</th><th>Course</th><th>Category</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
             <tbody id="enrollmentsBody"></tbody>
           </table>
         </div>
@@ -386,12 +386,16 @@
         document.getElementById('enrollmentsBody').innerHTML = data.map((e,i) => `
           <tr>
             <td style="opacity:0.4">${i+1}</td>
-            <td><strong>${e.student_name}</strong></td>
-            <td style="opacity:0.7;font-size:0.8rem">${e.email}</td>
-            <td>${e.title}</td>
+            <td><strong>${e.student_name}</strong><br><span style="font-size:11px;opacity:0.6">${e.email}</span></td>
+            <td style="font-size:0.85rem">${e.title}</td>
             <td>${catBadge(e.category)}</td>
-            <td><span class="badge badge-${e.status==='active'?'active':'pending'}">${e.status}</span></td>
-            <td style="opacity:0.6">${fmtDate(e.enrolled_at)}</td>
+            <td><span class="badge badge-${e.status==='active'?'active':e.status==='completed'?'active':'pending'}">${e.status}</span></td>
+            <td style="opacity:0.6;font-size:0.8rem">${fmtDate(e.enrolled_at)}</td>
+            <td>
+              ${e.status === 'pending' ? `<button onclick="giveAccess(${e.id})" style="background:#10b981;color:white;border:none;padding:5px 12px;border-radius:5px;cursor:pointer;font-size:12px;font-weight:700;">&#10003; Give Access</button>` : ''}
+              ${e.status === 'active' ? `<span style="display:flex;gap:5px;flex-wrap:wrap;"><button onclick="revokeAccess(${e.id})" style="background:#ef4444;color:white;border:none;padding:4px 9px;border-radius:5px;cursor:pointer;font-size:11px;">&#10006; Revoke</button><button onclick="markComplete(${e.id})" style="background:#6366f1;color:white;border:none;padding:4px 9px;border-radius:5px;cursor:pointer;font-size:11px;">&#127891; Complete</button></span>` : ''}
+              ${e.status === 'completed' ? `<span style="color:#10b981;font-size:12px;font-weight:700;">&#10003; Done</span>` : ''}
+            </td>
           </tr>
         `).join('') || emptyRow(7);
         document.getElementById('recentEnrollmentsBody').innerHTML = data.slice(0,5).map((e,i) => `
@@ -466,6 +470,52 @@
 
     // Load overview on start
     loadPanel('overview');
+  
+    async function giveAccess(enrollmentId) {
+      if (!confirm('Give course access to this student? They will be able to view notes, code examples and videos.')) return;
+      try {
+        const res = await fetch('/api/admin/enrollments/' + enrollmentId + '/approve', {
+          method: 'PUT', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('plustech_token') }
+        });
+        const data = await res.json();
+        if (data.success) { showToast('Access granted! Student can now view course materials.', 'success'); await loadEnrollments(); }
+        else showToast(data.error || 'Error', 'error');
+      } catch(e) { showToast('Network error', 'error'); }
+    }
+
+    async function revokeAccess(enrollmentId) {
+      if (!confirm('Revoke access? Student will no longer see course materials.')) return;
+      try {
+        const res = await fetch('/api/admin/enrollments/' + enrollmentId + '/revoke', {
+          method: 'PUT', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('plustech_token') }
+        });
+        const data = await res.json();
+        if (data.success) { showToast('Access revoked successfully.', 'success'); await loadEnrollments(); }
+        else showToast(data.error || 'Error', 'error');
+      } catch(e) { showToast('Network error', 'error'); }
+    }
+
+    async function markComplete(enrollmentId) {
+      if (!confirm('Mark this enrollment as completed?')) return;
+      try {
+        const res = await fetch('/api/admin/enrollments/' + enrollmentId + '/complete', {
+          method: 'PUT', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('plustech_token') }
+        });
+        const data = await res.json();
+        if (data.success) { showToast('Marked as completed!', 'success'); await loadEnrollments(); }
+        else showToast(data.error || 'Error', 'error');
+      } catch(e) { showToast('Network error', 'error'); }
+    }
+
+    function showToast(msg, type) {
+      const t = document.createElement('div');
+      t.style.cssText = 'position:fixed;bottom:24px;right:24px;padding:14px 22px;border-radius:8px;color:white;font-weight:600;z-index:9999;font-size:14px;box-shadow:0 4px 16px rgba(0,0,0,0.3);';
+      t.style.background = type === 'success' ? '#10b981' : '#ef4444';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 3500);
+    }
+
   </script>
 </body>
 </html>
